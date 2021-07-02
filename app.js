@@ -2,7 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const bodyParser = require("body-parser");
 const client = require('@mailchimp/mailchimp_marketing');
-const keys = require("./keys.json")
+const keys = require("./keys-lock.json")
 
 const app = express();
 const PORT = 5500;
@@ -35,7 +35,11 @@ app.post("/sign-up", (req, res) => {
         const response = await client.lists.batchListMembers(keys.listID, {
             members: data,
         });
-        res.send(response);
+        
+        if(response.error_count)
+            res.sendFile(__dirname + "/failure.html");
+        else    
+            res.sendFile(__dirname + "/success.html");
     };
 
     run();
